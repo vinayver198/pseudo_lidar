@@ -1,19 +1,14 @@
 import os
-import sys
 import numpy as np
-import cv2
-from matplotlib import pyplot as plt
 import argparse
 import mxnet as mx
 from mxnet.gluon.data.vision import transforms
 import gluoncv
 import PIL.Image as pil
-import matplotlib as mpl
-import matplotlib.cm as cm
 from glob import glob
 
 parser = argparse.ArgumentParser()
-parser.add_argument("--root_dir",None,"Directory of kitti data",required=True)
+parser.add_argument("--root_dir",default=None,help="Directory of kitti data",required=True)
 
 feed_height = 192
 feed_width = 640
@@ -58,14 +53,16 @@ def main(root_dir):
 
 
     for training_image in training_images:
+        print(f"Processing {training_image}")
         filename = training_image.split('/')[-1].split('.')[0]
         scaled_disp = generate_disp(training_image)
-        np.save(scaled_disp,os.path.join(root_dir,'training/disparity/{}.npy'.format(filename)))
+        np.save(os.path.join(root_dir,'training/disparity/{}.npy'.format(filename)),scaled_disp)
 
     for testing_image in testing_images:
+        print(f"Processing {testing_image}")
         filename = testing_image.split('/')[-1].split('.')[0]
         scaled_disp = generate_disp(testing_image)
-        np.save(scaled_disp,os.path.join(root_dir,'training/disparity/{}.npy'.format(filename)))
+        np.save(os.path.join(root_dir,'testing/disparity/{}.npy'.format(filename)),scaled_disp)
 
 
 if __name__ == "__main__":

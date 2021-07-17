@@ -12,25 +12,15 @@ import kitti_util
 
 def project_disp_to_points(calib, disp, max_high):
     disp[disp < 0] = 0
-    baseline = 0.54
+    baseline = 5.4
     mask = disp > 0
-    depth = calib.f_u * baseline / (disp + 1. - mask)
+    depth = baseline / (disp + 1. - mask)
     rows, cols = depth.shape
     c, r = np.meshgrid(np.arange(cols), np.arange(rows))
     points = np.stack([c, r, depth])
     points = points.reshape((3, -1))
     points = points.T
     points = points[mask.reshape(-1)]
-    cloud = calib.project_image_to_velo(points)
-    valid = (cloud[:, 0] >= 0) & (cloud[:, 2] < max_high)
-    return cloud[valid]
-
-def project_depth_to_points(calib, depth, max_high):
-    rows, cols = depth.shape
-    c, r = np.meshgrid(np.arange(cols), np.arange(rows))
-    points = np.stack([c, r, depth])
-    points = points.reshape((3, -1))
-    points = points.T
     cloud = calib.project_image_to_velo(points)
     valid = (cloud[:, 0] >= 0) & (cloud[:, 2] < max_high)
     return cloud[valid]

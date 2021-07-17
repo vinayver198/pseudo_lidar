@@ -40,7 +40,7 @@ class kitti_object(object):
 
         self.image_dir = os.path.join(self.split_dir, 'image_2')
         self.calib_dir = os.path.join(self.split_dir, 'calib')
-        self.lidar_dir = os.path.join(self.split_dir, 'velodyne')
+        self.lidar_dir = os.path.join(self.split_dir, 'pseudo_velodyne')
         self.label_dir = os.path.join(self.split_dir, 'label_2')
 
     def __len__(self):

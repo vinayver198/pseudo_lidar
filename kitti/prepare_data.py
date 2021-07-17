@@ -233,7 +233,8 @@ def extract_frustum_data(idx_filename, split, output_filename,dataset_path, viz=
                 # Reject too far away object or object without points
                 if ymax-ymin<25 or np.sum(label)==0:
                     continue
-
+                choice = np.random.choice(pc_in_box_fov.shape[0], 4096, replace=True)
+                pc_in_box_fov = pc_in_box_fov[choice,:]
                 id_list.append(data_idx)
                 box2d_list.append(np.array([xmin,ymin,xmax,ymax]))
                 box3d_list.append(box3d_pts_3d)
@@ -391,7 +392,8 @@ def extract_frustum_data_rgb_detection(det_filename, split, output_filename,data
         if ymax-ymin<img_height_threshold or \
             len(pc_in_box_fov)<lidar_point_threshold:
             continue
-       
+        choice = np.random.choice(pc_in_box_fov.shape[0], 4096, replace=True)
+        pc_in_box_fov = pc_in_box_fov[choice,:]
         id_list.append(data_idx)
         type_list.append(det_type_list[det_idx])
         box2d_list.append(det_box2d_list[det_idx])

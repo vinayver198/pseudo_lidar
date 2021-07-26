@@ -85,7 +85,7 @@ def mask_point_cloud(point_cloud, logits, xyz_only=True):
     return object_point_cloud, tf.squeeze(mask_xyz_mean, axis=1)
 
 
-@tf.function
+
 def parse_output_to_tensors(output, end_points):
     ''' Parse batch output to separate tensors (added to end_points)
     Input:
@@ -118,5 +118,6 @@ def parse_output_to_tensors(output, end_points):
     end_points['size_residuals_normalized'] = size_residuals_normalized
     end_points['size_residuals'] = size_residuals_normalized * \
                                    tf.expand_dims(tf.constant(g_mean_size_arr, dtype=tf.float32), 0)
+
 
     return end_points

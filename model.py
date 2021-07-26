@@ -4,6 +4,8 @@ from tensorflow.keras import Input, Model
 from tensorflow.keras.optimizers import Adam
 from tensorflow.keras.callbacks import EarlyStopping, ModelCheckpoint, LearningRateScheduler
 from model_utils import NUM_HEADING_BIN, NUM_SIZE_CLUSTER, mask_point_cloud,parse_output_to_tensors
+from losses import get_loss
+
 tf.compat.v1.disable_eager_execution()
 
 class CenterRegressionNet(tf.keras.layers.Layer):
@@ -136,28 +138,24 @@ def get_model(inputs,one_hot_vec):
     box_outputs = box_estimation_layer(object_point_cloud_xyz_new, one_hot_vec)
     print(f'Keys : {end_points.keys()}')
     end_points = parse_output_to_tensors(box_outputs, end_points)
-    print(f'Keys : {end_points.keys()}')
     end_points['center'] = end_points['center_boxnet'] + stage1_center
     print(f'Keys : {end_points.keys()}')
-    model = Model(inputs=[inputs, one_hot_vec], outputs=[seg_outputs,stage1_center,box_outputs])
+    outputs = [end_points['mask_logits'],end_points['stage1_center'],end_points['center_boxnet'],
+               end_points['heading_scores'],end_points['heading_residuals_normalized'],
+               end_points['heading_residuals'],end_points['size_scores'],end_points['size_residuals_normalized'],
+               end_points['size_residuals'],end_points['center']]
+    model = Model(inputs=[inputs, one_hot_vec], outputs=outputs)
     return model,end_points
 
-inputs = Input(shape=(2048, 3))
-one_hot_vec = Input(shape=(3))
 
-model,end_points = get_model(inputs,one_hot_vec)
-model.summary()
-"""
 if __name__=='__main__':
-    with tf.Graph().as_default():
-        inputs = tf.zeros((32,1024,4))
-        outputs = get_model(inputs, tf.ones((32,3)), tf.constant(True))
-        for key in outputs:
-            print((key, outputs[key]))
-        loss = get_loss(tf.zeros((32,1024),dtype=tf.int32),
-            tf.zeros((32,3)), tf.zeros((32,),dtype=tf.int32),
-            tf.zeros((32,)), tf.zeros((32,),dtype=tf.int32),
-            tf.zeros((32,3)), outputs)
-        print(loss)
+    inputs = Input(shape=(2048, 3))
+    one_hot_vec = Input(shape=(3))
 
-"""
+    model, end_points = get_model(inputs, one_hot_vec)
+
+    outputs = model.predict([tf.zeros((32, 2048, 3)), tf.zeros((32, 3))], steps=1)
+    for output in outputs:
+        print(output.shape)
+    loss = get_loss(tf.zeros((32, 2048), dtype=tf.int32), tf.zeros((32, 3)), tf.zeros((32,), dtype=tf.int32),
+                    tf.zeros((32,)), tf.zeros((32,), dtype=tf.int32), tf.zeros((32, 3)), outputs)

@@ -1,1 +1,1 @@
-# 3d detection on Pseudo lidar data using Frustum PointNet
+# 3d detection on Pseudo Lidar using Frustum PointNet

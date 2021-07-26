@@ -7,7 +7,7 @@ and has been modified as per needs
 import argparse
 import os
 import numpy as np
-import kitti_util
+from kitti import kitti_util
 
 
 def project_disp_to_points(calib, disp, max_high):

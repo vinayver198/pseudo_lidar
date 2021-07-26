@@ -51,5 +51,21 @@ python generate_lidar.py --calib_dir <kitti calib path> --disparity_dir <Dispari
 
 This generates a folder for pseudo velodyne and stores data in .bin format
 
+## Train Frustum PointNet Model 
 
+1. To generate frustum data : 
+
+```
+
+cd kitti/
+python prepare_data.py --gen_train --gen_val --gen_val_rgb_detection
+
+```
+
+2. To train the model 
+
+```
+python train.py 
+
+```
 

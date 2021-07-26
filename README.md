@@ -31,7 +31,7 @@ KITTI/object/
 ```
 <br>
 Run the following command : <br>
-```
+```python
 python generate_disp.py --root_dir Path of kitti dataset
 ``` 
 <br>
